@@ -14,12 +14,17 @@ from tools import (
 
 app = FastAPI()
 
-# Enable CORS for ChatGPT access
+# Enable CORS for frontend and ChatGPT access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
+    allow_origins=[
+        "*",  # Allow all origins for development
+        "http://localhost:3000",
+        "https://localhost:3000"
+    ],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    allow_credentials=True,
 )
 
 # Register your routers
