@@ -1,27 +1,31 @@
 from fastapi import FastAPI
-from tools import get_bootstrap_data, get_fixtures, get_event_live, get_dream_team, get_fixtures_by_gw
-from tools import get_manager_info
-from tools import get_manager_history
-from tools import get_manager_picks
-from tools import get_transfers_by_gw
-from tools import get_set_piece_notes
-from tools import get_top_team_values
-from tools import get_player_history
-from tools import get_player_fixtures
-from tools import get_player_profile
-from tools import get_crowd_trends_by_gw
-from tools import get_classic_league_standings
-from tools import get_league_captains
-from tools import get_manager_gameweek_summary
-from tools import get_manager_gameweek_analysis
-from tools import get_upcoming_gameweek_planner
-from tools import get_rival_comparison
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
-
-
+# Tool imports
+from tools import (
+    get_bootstrap_data, get_fixtures, get_event_live, get_dream_team, get_fixtures_by_gw,
+    get_manager_info, get_manager_history, get_manager_picks, get_transfers_by_gw,
+    get_set_piece_notes, get_top_team_values, get_player_history, get_player_fixtures,
+    get_player_profile, get_crowd_trends_by_gw, get_classic_league_standings,
+    get_league_captains, get_manager_gameweek_summary, get_manager_gameweek_analysis,
+    get_upcoming_gameweek_planner, get_rival_comparison
+)
 
 app = FastAPI()
 
+# Serve /.well-known/ai-plugin.json
+app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
+
+# Enable CORS for ChatGPT access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Register your routers
 app.include_router(get_bootstrap_data.router)
 app.include_router(get_fixtures.router)
 app.include_router(get_event_live.router)
@@ -43,3 +47,8 @@ app.include_router(get_manager_gameweek_summary.router)
 app.include_router(get_manager_gameweek_analysis.router)
 app.include_router(get_upcoming_gameweek_planner.router)
 app.include_router(get_rival_comparison.router)
+
+# Run app if executed directly (used locally or in Procfile)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000)
