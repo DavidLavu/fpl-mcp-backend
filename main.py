@@ -14,9 +14,6 @@ from tools import (
 
 app = FastAPI()
 
-# Serve /.well-known/ai-plugin.json
-app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
-
 # Enable CORS for ChatGPT access
 app.add_middleware(
     CORSMiddleware,
@@ -48,7 +45,10 @@ app.include_router(get_manager_gameweek_analysis.router)
 app.include_router(get_upcoming_gameweek_planner.router)
 app.include_router(get_rival_comparison.router)
 
+
 # Run app if executed directly (used locally or in Procfile)
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000)
+    import os
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
