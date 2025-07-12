@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "FPL Assistant",
+  "name_for_model": "fpl_assistant",
+  "description_for_human": "Ask about your FPL picks, transfers, fixtures, and team analysis.",
+  "description_for_model": "Provides Fantasy Premier League data like player picks, transfers, and team analysis.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://web-production-f6c0.up.railway.app/openapi.json"
+  },
+  "logo_url": "https://web-production-f6c0.up.railway.app/logo.png",
+  "contact_email": "support@yourdomain.com",
+  "legal_info_url": "https://yourdomain.com/legal"
+}
