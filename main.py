@@ -9,8 +9,9 @@ from tools import (
     get_set_piece_notes, get_top_team_values, get_player_history, get_player_fixtures,
     get_player_profile, get_crowd_trends_by_gw, get_classic_league_standings,
     get_league_captains, get_manager_gameweek_summary, get_manager_gameweek_analysis,
-    get_upcoming_gameweek_planner, get_rival_comparison
+    get_upcoming_gameweek_planner, get_rival_comparison,get_team_images
 )
+
 
 app = FastAPI()
 
@@ -50,6 +51,7 @@ app.include_router(get_manager_gameweek_analysis.router)
 app.include_router(get_upcoming_gameweek_planner.router)
 app.include_router(get_rival_comparison.router)
 
+app.include_router(get_team_images.router)
 
 # Run app if executed directly (used locally or in Procfile)
 if __name__ == "__main__":
