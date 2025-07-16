@@ -3,12 +3,13 @@ import httpx
 import asyncio
 import time
 import logging
+import os
 from utils.bootstrap import get_cached_bootstrap
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-BASE_URL = "http://localhost:8000"  # Adjust if needed
+BASE_URL = os.getenv("INTERNAL_API_URL", "http://localhost:8000")
 
 async def safe_api_call(client: httpx.AsyncClient, url: str, fallback_data=None, timeout: float = 10.0, params=None):
     """Safely make API call with fallback and timeout"""
