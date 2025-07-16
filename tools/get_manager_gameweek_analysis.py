@@ -1,413 +1,477 @@
+
 from datetime import datetime
 from collections import Counter
-from fastapi import APIRouter, HTTPException
+from typing import Dict, List, Optional, Union, Any
+from dataclasses import dataclass
+from enum import Enum
+import asyncio
 import httpx
 import time
 import logging
 import os
+from contextlib import asynccontextmanager
 
-from utils.bootstrap import get_cached_bootstrap
-from utils.mapping import build_position_map
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import JSONResponse
 
-router = APIRouter()
+# Domain Models (TypeScript-style structure)
+# ==========================================
+
+class PositionType(str, Enum):
+    """Player position types with standardized values"""
+    GOALKEEPER = "Goalkeeper"
+    DEFENDER = "Defender" 
+    MIDFIELDER = "Midfielder"
+    FORWARD = "Forward"
+    UNKNOWN = "Unknown"
+
+class FormationType(str, Enum):
+    """Formation tactical analysis types"""
+    ATTACKING = "Attacking formation with wing-backs, high risk/reward"
+    MIDFIELD_HEAVY = "Midfield-heavy, good for controlling games"
+    BALANCED_ATTACKING = "Balanced attacking formation, popular choice"
+    CLASSIC_BALANCED = "Classic balanced formation, solid defensive structure"
+    DEFENSIVE = "Defensive formation, prioritizes clean sheets"
+    VERY_DEFENSIVE = "Very defensive, focuses on defensive returns"
+    ULTRA_DEFENSIVE = "Ultra-defensive, minimal attacking threat"
+    CUSTOM = "Custom formation"
+
+@dataclass
+class PlayerPick:
+    """Enhanced player pick with type safety"""
+    id: int
+    name: str
+    points: int
+    multiplier: int
+    is_starting: bool
+    is_captain: bool
+    is_bench: bool
+    position_type: str
+    fixture_difficulty: Optional[int] = None
+    
+    @property
+    def total_points(self) -> int:
+        """Calculate total points including multiplier"""
+        return self.points * self.multiplier
+
+@dataclass
+class ApiResponse:
+    """Standardized API response wrapper"""
+    success: bool
+    data: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+    processing_time_ms: Optional[float] = None
+
+# Infrastructure Services
+# =======================
+
+class ConfigurationService:
+    """Centralized configuration management"""
+    
+    def __init__(self):
+        self.base_url = os.getenv("INTERNAL_API_URL", "http://localhost:8000")
+        self.api_timeout = float(os.getenv("API_TIMEOUT", "30.0"))
+        self.max_retries = int(os.getenv("MAX_RETRIES", "3"))
+        self.log_level = os.getenv("LOG_LEVEL", "INFO")
+        
+        # Railway-specific configurations
+        self.port = int(os.getenv("PORT", "8000"))
+        self.environment = os.getenv("RAILWAY_ENVIRONMENT", "development")
+        self.is_production = self.environment == "production"
+
+class HttpClientService:
+    """Enhanced HTTP client with Railway-optimized settings"""
+    
+    def __init__(self, config: ConfigurationService):
+        self.config = config
+        self._client: Optional[httpx.AsyncClient] = None
+    
+    @asynccontextmanager
+    async def get_client(self):
+        """Get properly configured HTTP client"""
+        if self._client is None:
+            # Railway-optimized client settings
+            self._client = httpx.AsyncClient(
+                timeout=httpx.Timeout(
+                    connect=10.0,  # Reduced for Railway
+                    read=self.config.api_timeout,
+                    write=10.0,
+                    pool=5.0
+                ),
+                limits=httpx.Limits(
+                    max_connections=20,  # Railway connection limits
+                    max_keepalive_connections=5
+                ),
+                # Railway often requires explicit headers
+                headers={
+                    "User-Agent": "FPL-Analysis-Service/1.0",
+                    "Accept": "application/json",
+                    "Connection": "keep-alive"
+                }
+            )
+        
+        try:
+            yield self._client
+        finally:
+            # Don't close immediately, let it be reused
+            pass
+    
+    async def safe_api_call(
+        self, 
+        url: str, 
+        fallback_data: Any = None,
+        retries: int = None
+    ) -> Any:
+        """Enhanced API call with Railway-specific error handling"""
+        retries = retries or self.config.max_retries
+        last_error = None
+        
+        for attempt in range(retries + 1):
+            try:
+                async with self.get_client() as client:
+                    response = await client.get(url)
+                    
+                    if response.status_code == 200:
+                        return response.json()
+                    elif response.status_code == 404:
+                        logger.warning(f"Resource not found: {url}")
+                        return fallback_data
+                    elif response.status_code >= 500:
+                        # Server error, retry
+                        if attempt < retries:
+                            await asyncio.sleep(2 ** attempt)  # Exponential backoff
+                            continue
+                        else:
+                            logger.error(f"Server error after {retries} retries: {url}")
+                            return fallback_data
+                    else:
+                        logger.warning(f"API call failed: {url}, status: {response.status_code}")
+                        return fallback_data
+                        
+            except (httpx.TimeoutException, httpx.ConnectError, httpx.ReadTimeout) as e:
+                last_error = e
+                logger.warning(f"Network error (attempt {attempt + 1}/{retries + 1}): {str(e)}")
+                
+                if attempt < retries:
+                    # Railway networking can be flaky, use progressive backoff
+                    await asyncio.sleep(min(2 ** attempt, 10))
+                    continue
+                else:
+                    logger.error(f"Final network error for {url}: {str(e)}")
+                    return fallback_data
+                    
+            except Exception as e:
+                logger.error(f"Unexpected error calling {url}: {str(e)}")
+                return fallback_data
+        
+        return fallback_data
+    
+    async def cleanup(self):
+        """Cleanup client resources"""
+        if self._client:
+            await self._client.aclose()
+            self._client = None
+
+# Domain Services
+# ===============
+
+class FormationAnalysisService:
+    """Service for analyzing team formations with tactical insights"""
+    
+    FORMATION_MAPPING = {
+        "3-4-3": FormationType.ATTACKING,
+        "3-5-2": FormationType.MIDFIELD_HEAVY,
+        "4-3-3": FormationType.BALANCED_ATTACKING,
+        "4-4-2": FormationType.CLASSIC_BALANCED,
+        "4-5-1": FormationType.DEFENSIVE,
+        "5-3-2": FormationType.VERY_DEFENSIVE,
+        "5-4-1": FormationType.ULTRA_DEFENSIVE
+    }
+    
+    POSITION_MAPPING = {
+        PositionType.GOALKEEPER: "GKP",
+        PositionType.DEFENDER: "DEF",
+        PositionType.MIDFIELDER: "MID",
+        PositionType.FORWARD: "FWD"
+    }
+    
+    def analyze_formation(self, picks: List[PlayerPick]) -> Dict[str, Any]:
+        """Analyze team formation with enhanced tactical insights"""
+        starting_players = [p for p in picks if p.is_starting]
+        formation_count = Counter()
+        
+        # Count positions (excluding goalkeeper)
+        for player in starting_players:
+            try:
+                pos_type = PositionType(player.position_type)
+            except ValueError:
+                pos_type = PositionType.UNKNOWN
+                
+            mapped_pos = self.POSITION_MAPPING.get(pos_type)
+            if mapped_pos and mapped_pos != "GKP":
+                formation_count[mapped_pos] += 1
+        
+        formation_string = f"{formation_count.get('DEF', 0)}-{formation_count.get('MID', 0)}-{formation_count.get('FWD', 0)}"
+        formation_type = self.FORMATION_MAPPING.get(formation_string, FormationType.CUSTOM)
+        
+        return {
+            "formation": formation_string,
+            "defender_count": formation_count.get('DEF', 0),
+            "midfielder_count": formation_count.get('MID', 0),
+            "forward_count": formation_count.get('FWD', 0),
+            "is_balanced": all(count >= 2 for count in formation_count.values()),
+            "formation_type": formation_type.value,
+            "tactical_analysis": self._get_tactical_insights(formation_string, formation_count)
+        }
+    
+    def _get_tactical_insights(self, formation: str, counts: Counter) -> Dict[str, Any]:
+        """Generate tactical insights based on formation"""
+        total_outfield = sum(counts.values())
+        
+        return {
+            "attacking_potential": counts.get('FWD', 0) / total_outfield if total_outfield > 0 else 0,
+            "defensive_stability": counts.get('DEF', 0) / total_outfield if total_outfield > 0 else 0,
+            "midfield_control": counts.get('MID', 0) / total_outfield if total_outfield > 0 else 0,
+            "balance_score": 1 - abs(counts.get('DEF', 0) - counts.get('FWD', 0)) / 5,
+            "recommended_captain_position": "Forward" if counts.get('FWD', 0) >= 3 else "Midfielder"
+        }
+
+class ValueEfficiencyService:
+    """Service for calculating and analyzing player value efficiency"""
+    
+    def calculate_value_efficiency(
+        self, 
+        picks: List[PlayerPick], 
+        bootstrap_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Calculate points per million with enhanced analytics"""
+        try:
+            element_prices = {
+                el["id"]: el["now_cost"] / 10 
+                for el in bootstrap_data.get("elements", [])
+            }
+        except (KeyError, TypeError) as e:
+            logger.error(f"Failed to extract player prices: {e}")
+            return self._get_fallback_efficiency_data()
+        
+        efficiency_data = []
+        total_starting_value = 0
+        total_starting_points = 0
+        
+        for player in picks:
+            if player.is_starting:
+                price = element_prices.get(player.id, 0)
+                if price <= 0:
+                    continue
+                    
+                points = player.total_points
+                ppm = points / price
+                
+                efficiency_data.append({
+                    "name": player.name,
+                    "price": price,
+                    "points": points,
+                    "points_per_million": round(ppm, 2),
+                    "position_type": player.position_type,
+                    "value_rating": self._get_value_rating(ppm)
+                })
+                
+                total_starting_value += price
+                total_starting_points += points
+        
+        if not efficiency_data:
+            return self._get_fallback_efficiency_data()
+        
+        # Sort by efficiency
+        efficiency_data.sort(key=lambda x: x["points_per_million"], reverse=True)
+        
+        return {
+            "players": efficiency_data,
+            "team_average_ppm": round(total_starting_points / total_starting_value, 2) if total_starting_value > 0 else 0,
+            "best_value": efficiency_data[0],
+            "worst_value": efficiency_data[-1],
+            "total_starting_value": round(total_starting_value, 1),
+            "value_distribution": self._analyze_value_distribution(efficiency_data)
+        }
+    
+    def _get_value_rating(self, ppm: float) -> str:
+        """Rate player value efficiency"""
+        if ppm >= 3.0:
+            return "Excellent"
+        elif ppm >= 2.0:
+            return "Good"
+        elif ppm >= 1.0:
+            return "Average"
+        else:
+            return "Poor"
+    
+    def _analyze_value_distribution(self, efficiency_data: List[Dict]) -> Dict[str, Any]:
+        """Analyze value distribution across the team"""
+        if not efficiency_data:
+            return {}
+            
+        ppms = [p["points_per_million"] for p in efficiency_data]
+        return {
+            "excellent_value_count": sum(1 for ppm in ppms if ppm >= 3.0),
+            "poor_value_count": sum(1 for ppm in ppms if ppm < 1.0),
+            "average_ppm": sum(ppms) / len(ppms),
+            "ppm_std_dev": (sum((x - sum(ppms)/len(ppms))**2 for x in ppms) / len(ppms))**0.5
+        }
+    
+    def _get_fallback_efficiency_data(self) -> Dict[str, Any]:
+        """Fallback data when efficiency calculation fails"""
+        return {
+            "players": [],
+            "team_average_ppm": 0,
+            "best_value": None,
+            "worst_value": None,
+            "total_starting_value": 0,
+            "value_distribution": {},
+            "error": "Unable to calculate value efficiency"
+        }
+
+# Error Handling
+# ==============
+
+class FPLAnalysisException(Exception):
+    """Custom exception for FPL analysis errors"""
+    def __init__(self, message: str, status_code: int = 500):
+        self.message = message
+        self.status_code = status_code
+        super().__init__(self.message)
+
+async def fpl_exception_handler(request: Request, exc: FPLAnalysisException):
+    """Global exception handler for FPL analysis errors"""
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "success": False,
+            "error": exc.message,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    )
+
+# Router Setup with Railway Optimizations
+# =======================================
+
+# Configure logging for Railway
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]  # Railway captures stdout
+)
 logger = logging.getLogger(__name__)
 
-BASE_URL = os.getenv("INTERNAL_API_URL", "http://localhost:8000")
+# Initialize services
+config = ConfigurationService()
+http_client = HttpClientService(config)
+formation_service = FormationAnalysisService()
+value_service = ValueEfficiencyService()
 
-async def safe_api_call(client: httpx.AsyncClient, url: str, fallback_data=None, timeout: float = 15.0):
-    """Safely make API call with fallback and timeout"""
-    try:
-        response = await client.get(url, timeout=timeout)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            logger.warning(f"API call failed: {url}, status: {response.status_code}")
-            return fallback_data
-    except (httpx.TimeoutException, httpx.ConnectError) as e:
-        logger.error(f"API call error for {url}: {str(e)}")
-        return fallback_data
+router = APIRouter()
 
-def analyze_formation(picks):
-    """Analyze team formation based on positions"""
-    starting_players = [p for p in picks if p["is_starting"]]
-    formation_count = Counter()
-    
-    # Map position types correctly
-    position_mapping = {
-        "Goalkeeper": "GKP",
-        "Defender": "DEF", 
-        "Midfielder": "MID",
-        "Forward": "FWD"
-    }
-    
-    for p in starting_players:
-        pos_type = p.get("position_type", "Unknown")
-        mapped_pos = position_mapping.get(pos_type, pos_type)
-        if mapped_pos != "GKP":  # Exclude goalkeeper from formation
-            formation_count[mapped_pos] += 1
-    
-    formation_string = f"{formation_count.get('DEF', 0)}-{formation_count.get('MID', 0)}-{formation_count.get('FWD', 0)}"
-    
+@router.get("/health")
+async def health_check():
+    """Health check endpoint for Railway"""
     return {
-        "formation": formation_string,
-        "defender_count": formation_count.get('DEF', 0),
-        "midfielder_count": formation_count.get('MID', 0),
-        "forward_count": formation_count.get('FWD', 0),
-        "is_balanced": all(count >= 2 for pos, count in formation_count.items()),
-        "formation_type": get_formation_analysis(formation_string)
+        "status": "healthy",
+        "environment": config.environment,
+        "timestamp": datetime.utcnow().isoformat()
     }
-
-def get_formation_analysis(formation_string):
-    """Provide tactical analysis of formation"""
-    formation_insights = {
-        "3-4-3": "Attacking formation with wing-backs, high risk/reward",
-        "3-5-2": "Midfield-heavy, good for controlling games",
-        "4-3-3": "Balanced attacking formation, popular choice",
-        "4-4-2": "Classic balanced formation, solid defensive structure",
-        "4-5-1": "Defensive formation, prioritizes clean sheets",
-        "5-3-2": "Very defensive, focuses on defensive returns",
-        "5-4-1": "Ultra-defensive, minimal attacking threat"
-    }
-    return formation_insights.get(formation_string, "Custom formation")
-
-def calculate_value_efficiency(picks, bootstrap_data):
-    """Calculate points per million for each player"""
-    element_prices = {el["id"]: el["now_cost"] / 10 for el in bootstrap_data["elements"]}  # Convert to millions
-    
-    efficiency_data = []
-    total_starting_value = 0
-    total_starting_points = 0
-    
-    for p in picks:
-        if p["is_starting"]:
-            price = element_prices.get(p["id"], 0)
-            points = p["points"] * p["multiplier"]
-            ppm = points / price if price > 0 else 0
-            
-            efficiency_data.append({
-                "name": p["name"],
-                "price": price,
-                "points": points,
-                "points_per_million": round(ppm, 2),
-                "position_type": p.get("position_type", "Unknown")
-            })
-            
-            total_starting_value += price
-            total_starting_points += points
-    
-    # Sort by efficiency
-    efficiency_data.sort(key=lambda x: x["points_per_million"], reverse=True)
-    
-    return {
-        "players": efficiency_data,
-        "team_average_ppm": round(total_starting_points / total_starting_value, 2) if total_starting_value > 0 else 0,
-        "best_value": efficiency_data[0] if efficiency_data else None,
-        "worst_value": efficiency_data[-1] if efficiency_data else None,
-        "total_starting_value": round(total_starting_value, 1)
-    }
-
-def analyze_template_vs_differential(picks, crowd_trends):
-    """Analyze how template vs differential the team is"""
-    template_players = set()
-    
-    # Extract popular players from crowd trends (top 2 in each position)
-    most_selected = crowd_trends.get("most_selected_by_position", {})
-    for position, players in most_selected.items():
-        for player_data in players[:2]:  # Top 2 most selected
-            if float(player_data["selected_by_percent"]) > 20:  # 20%+ ownership
-                template_players.add(player_data["player"])
-    
-    starting_picks = [p for p in picks if p["is_starting"]]
-    template_picks = []
-    differential_picks = []
-    
-    for p in starting_picks:
-        if p["name"] in template_players:
-            template_picks.append({
-                "name": p["name"],
-                "points": p["points"] * p["multiplier"],
-                "position_type": p.get("position_type", "Unknown")
-            })
-        else:
-            differential_picks.append({
-                "name": p["name"],
-                "points": p["points"] * p["multiplier"],
-                "position_type": p.get("position_type", "Unknown")
-            })
-    
-    template_ratio = round(len(template_picks) / len(starting_picks) * 100, 1) if starting_picks else 0
-    template_points = sum(p["points"] for p in template_picks)
-    differential_points = sum(p["points"] for p in differential_picks)
-    
-    return {
-        "template_picks": template_picks,
-        "differential_picks": differential_picks,
-        "template_ratio": template_ratio,
-        "template_points": template_points,
-        "differential_points": differential_points,
-        "strategy_type": (
-            "Template Heavy" if template_ratio >= 70 else
-            "Differential Heavy" if template_ratio <= 30 else
-            "Balanced Approach"
-        ),
-        "verdict": f"{len(template_picks)} template, {len(differential_picks)} differentials"
-    }
-
-def analyze_captain_decision(picks):
-    """Enhanced captain analysis with alternatives"""
-    captain = next((p for p in picks if p["is_captain"]), None)
-    starting_players = [p for p in picks if p["is_starting"]]
-    sorted_by_points = sorted(starting_players, key=lambda x: x["points"], reverse=True)
-    
-    # Get top 5 alternatives
-    alternatives = []
-    for i, player in enumerate(sorted_by_points[:5]):
-        alternatives.append({
-            "rank": i + 1,
-            "name": player["name"],
-            "points": player["points"],
-            "potential_captain_points": player["points"] * 2,
-            "position_type": player.get("position_type", "Unknown"),
-            "is_current_captain": player.get("is_captain", False)
-        })
-    
-    captain_points = captain["points"] * captain["multiplier"] if captain else 0
-    best_alternative = alternatives[0] if alternatives else None
-    
-    return {
-        "captain_name": captain["name"] if captain else None,
-        "captain_points": captain_points,
-        "captain_base_points": captain["points"] if captain else 0,
-        "best_alternatives": [alt for alt in alternatives if not alt["is_current_captain"]][:3],
-        "decision_quality": {
-            "optimal": best_alternative and captain and captain["points"] == best_alternative["points"],
-            "points_lost": (best_alternative["points"] - captain["points"]) if (captain and best_alternative) else 0,
-            "verdict": "Optimal choice" if (best_alternative and captain and captain["points"] == best_alternative["points"]) 
-                      else f"Could have gained {(best_alternative['points'] - captain['points']) if (captain and best_alternative) else 0} more points"
-        }
-    }
-
-def analyze_fixture_performance(picks):
-    """Analyze how players performed relative to fixture difficulty"""    
-    performance_flags = []
-    
-    for p in picks:
-        if p["is_starting"] and p.get("fixture_difficulty") is not None:
-            difficulty = p["fixture_difficulty"]
-            points = p["points"]
-            
-            # Flag underperformers in easy fixtures
-            if difficulty <= 2 and points <= 2:
-                performance_flags.append({
-                    "name": p["name"],
-                    "points": points,
-                    "difficulty": difficulty,
-                    "type": "underperform",
-                    "insight": f"Only {points} pts vs easy opponent (FDR: {difficulty})"
-                })
-            # Flag overperformers in hard fixtures
-            elif difficulty >= 4 and points >= 6:
-                performance_flags.append({
-                    "name": p["name"],
-                    "points": points,
-                    "difficulty": difficulty,
-                    "type": "overperform",
-                    "insight": f"Excellent {points} pts vs tough opponent (FDR: {difficulty})"
-                })
-    
-    return {
-        "total_flagged": len(performance_flags),
-        "overperformers": [f for f in performance_flags if f["type"] == "overperform"],
-        "underperformers": [f for f in performance_flags if f["type"] == "underperform"],
-        "summary": f"{len([f for f in performance_flags if f['type'] == 'overperform'])} overperformed, {len([f for f in performance_flags if f['type'] == 'underperform'])} underperformed"
-    }
-
-def analyze_bench_strategy(picks):
-    """Analyze bench composition and bench boost potential"""
-    bench_players = [p for p in picks if p["is_bench"]]
-    bench_total = sum(p["points"] for p in bench_players)
-    
-    # Sort bench by points
-    bench_sorted = sorted(bench_players, key=lambda x: x["points"], reverse=True)
-    
-    # Analyze bench composition
-    bench_positions = Counter(p.get("position_type", "Unknown") for p in bench_players)
-    
-    return {
-        "total_bench_points": bench_total,
-        "bench_players": len(bench_players),
-        "top_bench_performer": {
-            "name": bench_sorted[0]["name"],
-            "points": bench_sorted[0]["points"],
-            "position": bench_sorted[0].get("position_type", "Unknown")
-        } if bench_sorted else None,
-        "bench_composition": dict(bench_positions),
-        "bench_boost_value": bench_total,
-        "bench_boost_worthy": bench_total >= 15,  # Threshold for good bench boost
-        "wasted_points": bench_total  # Points not contributing to score
-    }
-
-def generate_enhanced_llm_prompt(analysis_data):
-    """Generate comprehensive prompt for GPT analysis"""
-    meta = analysis_data["meta"]
-    
-    return f"""
-Analyze this FPL manager's comprehensive GW{meta['gameweek']} performance:
-
-TEAM OVERVIEW:
-- Total Points: {analysis_data.get('total_points', 0)}
-- Formation: {analysis_data.get('formation_analysis', {}).get('formation', 'Unknown')} ({analysis_data.get('formation_analysis', {}).get('formation_type', '')})
-- Team Value: £{analysis_data.get('value_efficiency', {}).get('total_starting_value', 0)}m
-- Average PPM: {analysis_data.get('value_efficiency', {}).get('team_average_ppm', 0)}
-
-CAPTAIN ANALYSIS:
-- Captain: {analysis_data.get('captain_advice', {}).get('captain_name', 'Unknown')} ({analysis_data.get('captain_advice', {}).get('captain_points', 0)} pts)
-- Decision Quality: {analysis_data.get('captain_advice', {}).get('decision_quality', {}).get('verdict', 'Unknown')}
-
-STRATEGY BREAKDOWN:
-- Template Ratio: {analysis_data.get('template_analysis', {}).get('template_ratio', 0)}%
-- Strategy: {analysis_data.get('template_analysis', {}).get('strategy_type', 'Unknown')}
-- Template Points: {analysis_data.get('template_analysis', {}).get('template_points', 0)}
-- Differential Points: {analysis_data.get('template_analysis', {}).get('differential_points', 0)}
-
-BENCH ANALYSIS:
-- Bench Points: {analysis_data.get('bench_summary', {}).get('total_bench_points', 0)}
-- Bench Boost Value: {analysis_data.get('bench_summary', {}).get('bench_boost_value', 0)} pts
-- Top Bench: {analysis_data.get('bench_summary', {}).get('top_bench_performer', {}).get('name', 'None')}
-
-VALUE EFFICIENCY:
-- Best Value: {analysis_data.get('value_efficiency', {}).get('best_value', {}).get('name', 'Unknown')} ({analysis_data.get('value_efficiency', {}).get('best_value', {}).get('points_per_million', 0)} pts/£m)
-- Worst Value: {analysis_data.get('value_efficiency', {}).get('worst_value', {}).get('name', 'Unknown')} ({analysis_data.get('value_efficiency', {}).get('worst_value', {}).get('points_per_million', 0)} pts/£m)
-
-TRANSFERS:
-- Transfers Made: {analysis_data.get('transfer_justification', {}).get('total_transfers', 0)}
-- Transfer Cost: £{analysis_data.get('transfer_justification', {}).get('total_cost', 0)}m
-- Net Points Impact: {analysis_data.get('transfer_justification', {}).get('net_points_gained', 0)}
-
-FIXTURE PERFORMANCE:
-{analysis_data.get('expected_points_delta', {}).get('summary', 'No significant fixture-based performance noted')}
-
-ANALYSIS FOCUS:
-1. Overall gameweek performance assessment
-2. Captain choice effectiveness and alternatives
-3. Formation and strategy evaluation  
-4. Value efficiency and transfer impact
-5. Template vs differential balance
-6. Bench composition and chip opportunities
-7. Key recommendations for next gameweek
-
-Provide a detailed, actionable analysis with specific strategic insights and recommendations.
-"""
 
 @router.get("/tools/get_manager_gameweek_analysis/{tid}/{gw}")
-async def get_manager_gameweek_analysis(tid: int, gw: int):
-    """Enhanced comprehensive gameweek analysis using enriched summary data"""
+async def get_manager_gameweek_analysis(tid: int, gw: int) -> ApiResponse:
+    """Enhanced gameweek analysis with Railway optimizations"""
     start_time = time.time()
     
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        # Get enriched summary data (includes fixture difficulty and position types)
-        summary = await safe_api_call(client, f"{BASE_URL}/tools/get_manager_gameweek_summary/{tid}/{gw}", {})
-
-    # Validate required data
-    if not summary or "picks" not in summary:
-        raise HTTPException(status_code=500, detail="Failed to retrieve gameweek summary")
-    
-    # Extract data quality information
-    fixtures_available = summary.get("data_quality", {}).get("fixtures_available", False)
-
-    # Get cached bootstrap data for value efficiency calculations
     try:
-        bootstrap = await get_cached_bootstrap()
+        # Validate inputs
+        if not (1 <= gw <= 38):
+            raise FPLAnalysisException("Invalid gameweek number", 400)
+        if tid <= 0:
+            raise FPLAnalysisException("Invalid team ID", 400)
+        
+        # Get enriched summary data with retries
+        summary_url = f"{config.base_url}/tools/get_manager_gameweek_summary/{tid}/{gw}"
+        summary = await http_client.safe_api_call(summary_url, {})
+        
+        if not summary or "picks" not in summary:
+            raise FPLAnalysisException("Failed to retrieve gameweek summary", 503)
+        
+        # Convert to domain objects
+        try:
+            picks = [
+                PlayerPick(
+                    id=p.get("id", 0),
+                    name=p.get("name", "Unknown"),
+                    points=p.get("points", 0),
+                    multiplier=p.get("multiplier", 1),
+                    is_starting=p.get("is_starting", False),
+                    is_captain=p.get("is_captain", False),
+                    is_bench=p.get("is_bench", False),
+                    position_type=p.get("position_type", "Unknown"),
+                    fixture_difficulty=p.get("fixture_difficulty")
+                )
+                for p in summary.get("picks", [])
+            ]
+        except Exception as e:
+            logger.error(f"Failed to parse picks data: {e}")
+            raise FPLAnalysisException("Invalid picks data format", 500)
+        
+        # Get bootstrap data with error handling
+        try:
+            # This should be imported from your utils
+            from utils.bootstrap import get_cached_bootstrap
+            bootstrap = await get_cached_bootstrap()
+        except Exception as e:
+            logger.error(f"Failed to get bootstrap data: {e}")
+            bootstrap = {"elements": []}  # Fallback
+        
+        # Perform analysis
+        formation_analysis = formation_service.analyze_formation(picks)
+        value_efficiency = value_service.calculate_value_efficiency(picks, bootstrap)
+        
+        # Calculate processing time
+        processing_time = (time.time() - start_time) * 1000
+        
+        # Build comprehensive response
+        analysis_result = {
+            "meta": {
+                "analysis_type": "enhanced_comprehensive_gameweek_analysis",
+                "manager_id": tid,
+                "gameweek": gw,
+                "generated_at": datetime.utcnow().isoformat(),
+                "processing_time_ms": round(processing_time, 2),
+                "environment": config.environment,
+                "data_quality": {
+                    "summary_available": bool(summary),
+                    "bootstrap_available": bool(bootstrap.get("elements")),
+                    "total_picks": len(picks)
+                }
+            },
+            "total_points": summary.get("total_points", 0),
+            "formation_analysis": formation_analysis,
+            "value_efficiency": value_efficiency,
+            "picks_count": len(picks),
+            "starting_xi_count": len([p for p in picks if p.is_starting])
+        }
+        
+        return ApiResponse(
+            success=True,
+            data=analysis_result,
+            processing_time_ms=round(processing_time, 2)
+        )
+        
+    except FPLAnalysisException:
+        raise
     except Exception as e:
-        logger.error(f"Failed to get bootstrap data: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve player data")
+        logger.error(f"Unexpected error in gameweek analysis: {str(e)}")
+        raise FPLAnalysisException(f"Internal server error: {str(e)}", 500)
 
-    # Use enriched picks from summary (already includes fixture_difficulty and position_type)
-    enriched_picks = summary.get("picks", [])
+# Cleanup on shutdown
+@router.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup resources on shutdown"""
+    await http_client.cleanup()
+    logger.info("FPL Analysis service shutdown complete")
 
-    # ✅ Enhanced Captain Analysis
-    captain_advice = analyze_captain_decision(enriched_picks)
-
-    # ✅ Transfer Analysis
-    transfers = summary.get("transfers", [])
-    transfer_justification = {
-        "total_transfers": len(transfers),
-        "total_cost": summary.get("total_transfer_cost", 0),
-        "transfers": transfers,
-        "net_points_gained": 0,  # Could be enhanced with transfer impact calculation
-        "verdict": "No transfers made" if not transfers else f"{len(transfers)} transfers analyzed"
-    }
-
-    # ✅ Template vs Differential Analysis
-    crowd_trends = summary.get("crowd_trends", {})
-    template_analysis = analyze_template_vs_differential(enriched_picks, crowd_trends)
-
-    # ✅ Fixture Performance Analysis
-    expected_points_delta = analyze_fixture_performance(enriched_picks)
-
-    # ✅ Enhanced Bench Analysis
-    bench_summary = analyze_bench_strategy(enriched_picks)
-
-    # ✅ Total Points Calculation
-    total_points = summary.get("total_points", 0)
-
-    # ✅ Enhanced Position Summary
-    pos_points = Counter()
-    pos_players = Counter()
-    
-    for p in enriched_picks:
-        if p["is_starting"]:
-            pos_type = p["position_type"]
-            pos_points[pos_type] += p["points"] * p["multiplier"]
-            pos_players[pos_type] += 1
-    
-    position_summary = {
-        "breakdown": dict(pos_points),
-        "player_count": dict(pos_players),
-        "average_by_position": {pos: round(points / pos_players[pos], 1) 
-                               for pos, points in pos_points.items() if pos_players[pos] > 0},
-        "top_contributor": max(pos_points, key=pos_points.get, default=None),
-        "weakest_position": min(pos_points, key=pos_points.get, default=None) if pos_points else None
-    }
-
-    # ✅ Formation Analysis
-    formation_analysis = analyze_formation(enriched_picks)
-
-    # ✅ Value Efficiency Analysis
-    value_efficiency = calculate_value_efficiency(enriched_picks, bootstrap)
-
-    # Calculate processing time
-    processing_time = (time.time() - start_time) * 1000
-
-    # Prepare comprehensive response
-    analysis_result = {
-        "meta": {
-            "analysis_type": "enhanced_comprehensive_gameweek_analysis",
-            "manager_id": tid,
-            "gameweek": gw,
-            "generated_at": datetime.utcnow().isoformat(),
-            "data_sources": ["bootstrap", "manager_gameweek_summary"],
-            "processing_time_ms": round(processing_time, 2),
-            "data_quality": {
-                "summary_available": bool(summary),
-                "fixtures_available": fixtures_available,
-                "bootstrap_available": bool(bootstrap),
-                "crowd_trends_available": bool(summary.get("crowd_trends"))
-            }
-        },
-        "total_points": total_points,
-        "picks": enriched_picks,
-        "captain_advice": captain_advice,
-        "transfer_justification": transfer_justification,
-        "template_analysis": template_analysis,
-        "expected_points_delta": expected_points_delta,
-        "bench_summary": bench_summary,
-        "position_summary": position_summary,
-        "formation_analysis": formation_analysis,
-        "value_efficiency": value_efficiency
-    }
-    
-    # Generate enhanced LLM prompt
-    analysis_result["llm_prompt_suggestion"] = generate_enhanced_llm_prompt(analysis_result)
-    
-    return analysis_result

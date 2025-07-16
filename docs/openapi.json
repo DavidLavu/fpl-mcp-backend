@@ -1,1 +1,1458 @@
-{"openapi":"3.1.0","info":{"title":"FastAPI","version":"0.1.0"},"paths":{"/tools/get_bootstrap_data":{"get":{"summary":"Get Bootstrap Data","operationId":"get_bootstrap_data_tools_get_bootstrap_data_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"additionalProperties":true,"type":"object","title":"Response Get Bootstrap Data Tools Get Bootstrap Data Get"}}}}}}},"/tools/get_fixtures":{"get":{"summary":"Get Fixtures","operationId":"get_fixtures_tools_get_fixtures_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/tools/get_event_live/{gw}":{"get":{"summary":"Get Event Live","operationId":"get_event_live_tools_get_event_live__gw__get","parameters":[{"name":"gw","in":"path","required":true,"schema":{"type":"integer","description":"Gameweek number","title":"Gw"},"description":"Gameweek number"}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_dream_team/{gw}":{"get":{"summary":"Get Dream Team","operationId":"get_dream_team_tools_get_dream_team__gw__get","parameters":[{"name":"gw","in":"path","required":true,"schema":{"type":"integer","description":"Gameweek number","title":"Gw"},"description":"Gameweek number"}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_fixtures_by_gw":{"get":{"summary":"Get Fixtures By Gw","operationId":"get_fixtures_by_gw_tools_get_fixtures_by_gw_get","parameters":[{"name":"gw","in":"query","required":true,"schema":{"type":"integer","description":"Gameweek number","title":"Gw"},"description":"Gameweek number"}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_manager_info/{tid}":{"get":{"summary":"Get Manager Info","operationId":"get_manager_info_tools_get_manager_info__tid__get","parameters":[{"name":"tid","in":"path","required":true,"schema":{"type":"integer","description":"FPL team ID","title":"Tid"},"description":"FPL team ID"}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_manager_history/{tid}":{"get":{"summary":"Get Manager History","operationId":"get_manager_history_tools_get_manager_history__tid__get","parameters":[{"name":"tid","in":"path","required":true,"schema":{"type":"integer","description":"FPL team ID","title":"Tid"},"description":"FPL team ID"}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_manager_picks/{tid}/{gw}":{"get":{"summary":"Get Manager Picks","operationId":"get_manager_picks_tools_get_manager_picks__tid___gw__get","parameters":[{"name":"tid","in":"path","required":true,"schema":{"type":"integer","description":"Manager (team) ID","title":"Tid"},"description":"Manager (team) ID"},{"name":"gw","in":"path","required":true,"schema":{"type":"integer","description":"Gameweek number","title":"Gw"},"description":"Gameweek number"}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_transfers_by_gw/{tid}/{gw}":{"get":{"summary":"Get Transfers By Gw","operationId":"get_transfers_by_gw_tools_get_transfers_by_gw__tid___gw__get","parameters":[{"name":"tid","in":"path","required":true,"schema":{"type":"integer","title":"Tid"}},{"name":"gw","in":"path","required":true,"schema":{"type":"integer","title":"Gw"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_set_piece_notes":{"get":{"summary":"Get Set Piece Notes","operationId":"get_set_piece_notes_tools_get_set_piece_notes_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/tools/get_top_team_values":{"get":{"summary":"Get Top Team Values","operationId":"get_top_team_values_tools_get_top_team_values_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/tools/get_player_history/{eid}":{"get":{"summary":"Get Player History","operationId":"get_player_history_tools_get_player_history__eid__get","parameters":[{"name":"eid","in":"path","required":true,"schema":{"type":"integer","title":"Eid"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_player_fixtures/{eid}":{"get":{"summary":"Get Player Fixtures","operationId":"get_player_fixtures_tools_get_player_fixtures__eid__get","parameters":[{"name":"eid","in":"path","required":true,"schema":{"type":"integer","title":"Eid"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_player_profile/{eid}":{"get":{"summary":"Get Player Profile","operationId":"get_player_profile_tools_get_player_profile__eid__get","parameters":[{"name":"eid","in":"path","required":true,"schema":{"type":"integer","title":"Eid"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_crowd_trends_by_gw/{gw}":{"get":{"summary":"Get Crowd Trends By Gw","operationId":"get_crowd_trends_by_gw_tools_get_crowd_trends_by_gw__gw__get","parameters":[{"name":"gw","in":"path","required":true,"schema":{"type":"integer","title":"Gw"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_classic_league_standings/{lid}":{"get":{"summary":"Get Classic League Standings","operationId":"get_classic_league_standings_tools_get_classic_league_standings__lid__get","parameters":[{"name":"lid","in":"path","required":true,"schema":{"type":"integer","title":"Lid"}},{"name":"page","in":"query","required":false,"schema":{"type":"integer","minimum":1,"default":1,"title":"Page"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_league_captains/{lid}/{gw}":{"get":{"summary":"Get League Captains","operationId":"get_league_captains_tools_get_league_captains__lid___gw__get","parameters":[{"name":"lid","in":"path","required":true,"schema":{"type":"integer","title":"Lid"}},{"name":"gw","in":"path","required":true,"schema":{"type":"integer","title":"Gw"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_manager_gameweek_summary/{tid}/{gw}":{"get":{"summary":"Get Manager Gameweek Summary","description":"Enhanced gameweek summary with parallel processing and fixture difficulty","operationId":"get_manager_gameweek_summary_tools_get_manager_gameweek_summary__tid___gw__get","parameters":[{"name":"tid","in":"path","required":true,"schema":{"type":"integer","title":"Tid"}},{"name":"gw","in":"path","required":true,"schema":{"type":"integer","title":"Gw"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_manager_gameweek_analysis/{tid}/{gw}":{"get":{"summary":"Get Manager Gameweek Analysis","description":"Enhanced comprehensive gameweek analysis using enriched summary data","operationId":"get_manager_gameweek_analysis_tools_get_manager_gameweek_analysis__tid___gw__get","parameters":[{"name":"tid","in":"path","required":true,"schema":{"type":"integer","title":"Tid"}},{"name":"gw","in":"path","required":true,"schema":{"type":"integer","title":"Gw"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_upcoming_gameweek_planner/{tid}/{next_gw}":{"get":{"summary":"Get Upcoming Gameweek Planner","description":"Enhanced gameweek planner with configurable gameweeks ahead (1-5 gameweeks)","operationId":"get_upcoming_gameweek_planner_tools_get_upcoming_gameweek_planner__tid___next_gw__get","parameters":[{"name":"tid","in":"path","required":true,"schema":{"type":"integer","title":"Tid"}},{"name":"next_gw","in":"path","required":true,"schema":{"type":"integer","title":"Next Gw"}},{"name":"gameweeks_ahead","in":"query","required":false,"schema":{"type":"integer","default":3,"title":"Gameweeks Ahead"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_rival_comparison/{lid}/{gw}":{"get":{"summary":"Get Rival Comparison","operationId":"get_rival_comparison_tools_get_rival_comparison__lid___gw__get","parameters":[{"name":"lid","in":"path","required":true,"schema":{"type":"integer","title":"Lid"}},{"name":"gw","in":"path","required":true,"schema":{"type":"integer","title":"Gw"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/tools/get_team_images":{"get":{"summary":"Get Team Images","description":"Returns shirt and badge image URLs for each PL team in 2025/26.","operationId":"get_team_images_tools_get_team_images_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{"items":{"additionalProperties":true,"type":"object"},"type":"array","title":"Response Get Team Images Tools Get Team Images Get"}}}}}}}},"components":{"schemas":{"HTTPValidationError":{"properties":{"detail":{"items":{"$ref":"#/components/schemas/ValidationError"},"type":"array","title":"Detail"}},"type":"object","title":"HTTPValidationError"},"ValidationError":{"properties":{"loc":{"items":{"anyOf":[{"type":"string"},{"type":"integer"}]},"type":"array","title":"Location"},"msg":{"type":"string","title":"Message"},"type":{"type":"string","title":"Error Type"}},"type":"object","required":["loc","msg","type"],"title":"ValidationError"}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FPL Analysis API - Railway Optimized",
+    "version": "2.0.0",
+    "description": "Railway-optimized Fantasy Premier League analysis API with enhanced error handling, batch processing, and comprehensive data enrichment.",
+    "contact": {
+      "name": "FPL Analysis API Support",
+      "url": "https://github.com/your-repo/fpl-analysis-api"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://your-railway-app.railway.app",
+      "description": "Railway Production Server"
+    },
+    {
+      "url": "http://localhost:8000",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Railway health check endpoint for monitoring service status",
+        "operationId": "health_check",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_upcoming_gameweek_planner/{tid}/{next_gw}": {
+      "get": {
+        "summary": "Get Upcoming Gameweek Planner",
+        "description": "Railway-optimized strategic gameweek planner with configurable lookahead (1-5 gameweeks). Provides fixture analysis, transfer recommendations, captain rotation planning, chip timing analysis, and formation optimization with batch API processing and comprehensive error recovery for network issues.",
+        "operationId": "get_upcoming_gameweek_planner_tools_get_upcoming_gameweek_planner__tid___next_gw__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "Team ID",
+              "description": "FPL team/manager ID"
+            },
+            "description": "FPL team/manager ID"
+          },
+          {
+            "name": "next_gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "title": "Next Gameweek",
+              "description": "Starting gameweek for planning (1-38)"
+            },
+            "description": "Starting gameweek for planning (1-38)"
+          },
+          {
+            "name": "gameweeks_ahead",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5,
+              "default": 3,
+              "title": "Gameweeks Ahead",
+              "description": "Number of gameweeks to analyze ahead (1-5). Higher values provide longer-term strategic insights."
+            },
+            "description": "Number of gameweeks to analyze ahead (1-5). 1=immediate decisions, 3=medium-term planning, 5=long-term strategy and chip timing."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "analysis_type": {"type": "string"},
+                        "manager_id": {"type": "integer"},
+                        "target_gameweek": {"type": "integer"},
+                        "gameweeks_analyzed": {"type": "array", "items": {"type": "integer"}},
+                        "gameweeks_ahead": {"type": "integer"},
+                        "generated_at": {"type": "string", "format": "date-time"},
+                        "data_sources": {"type": "array", "items": {"type": "string"}},
+                        "processing_time_ms": {"type": "number"},
+                        "environment": {"type": "string"}
+                      }
+                    },
+                    "planning_summary": {
+                      "type": "object",
+                      "properties": {
+                        "gameweek": {"type": "integer"},
+                        "gameweeks_analyzed": {"type": "array", "items": {"type": "integer"}},
+                        "gameweeks_ahead": {"type": "integer"},
+                        "free_transfers": {"type": "integer"},
+                        "priority_actions": {"type": "array", "items": {"type": "string"}},
+                        "key_insights": {"type": "array", "items": {"type": "string"}},
+                        "fixture_run_summary": {"type": "object"},
+                        "strategic_recommendation": {"type": "string"}
+                      }
+                    },
+                    "transfer_recommendations": {
+                      "type": "object",
+                      "properties": {
+                        "transfer_out_candidates": {"type": "array"},
+                        "players_to_monitor": {"type": "array"},
+                        "transfer_targets": {"type": "array"},
+                        "free_transfers": {"type": "integer"},
+                        "recommendation": {"type": "string"}
+                      }
+                    },
+                    "captain_recommendation": {
+                      "type": "object",
+                      "properties": {
+                        "top_captain_pick": {"type": "object", "nullable": true},
+                        "alternatives": {"type": "array"},
+                        "captain_rotation_plan": {"type": "array"},
+                        "recommendation": {"type": "string"}
+                      }
+                    },
+                    "chip_analysis": {"type": "object"},
+                    "formation_optimization": {"type": "object"},
+                    "upcoming_fixtures_overview": {
+                      "type": "object",
+                      "properties": {
+                        "total_fixtures_analyzed": {"type": "integer"},
+                        "gameweeks_covered": {"type": "array", "items": {"type": "integer"}},
+                        "fixtures_available": {"type": "boolean"},
+                        "teams_analyzed": {"type": "integer"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Manager or fixture data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_rival_comparison/{lid}/{gw}": {
+      "get": {
+        "summary": "Get Rival Comparison",
+        "description": "Compare performance against rivals in a specific league for a gameweek",
+        "operationId": "get_rival_comparison_tools_get_rival_comparison__lid___gw__get",
+        "parameters": [
+          {
+            "name": "lid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "League ID"
+            }
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "title": "Gameweek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "League or gameweek data not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_team_images": {
+      "get": {
+        "summary": "Get Team Images",
+        "description": "Returns shirt and badge image URLs for each Premier League team in 2025/26 season.",
+        "operationId": "get_team_images_tools_get_team_images_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "integer"},
+                      "name": {"type": "string"},
+                      "short_name": {"type": "string"},
+                      "shirt_url": {"type": "string", "format": "uri"},
+                      "badge_url": {"type": "string", "format": "uri"}
+                    }
+                  },
+                  "type": "array",
+                  "title": "Team Images"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {"type": "string"},
+                {"type": "integer"}
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": false
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message describing what went wrong"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the error occurred"
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "The endpoint that generated the error"
+          },
+          "service": {
+            "type": "string",
+            "description": "The service that generated the error"
+          }
+        },
+        "required": ["success", "error", "timestamp"],
+        "title": "Error Response"
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["healthy", "unhealthy"],
+            "description": "Service health status"
+          },
+          "service": {
+            "type": "string",
+            "description": "Service name"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Deployment environment"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Health check timestamp"
+          }
+        },
+        "required": ["status", "timestamp"],
+        "title": "Health Response"
+      },
+      "DataQuality": {
+        "type": "object",
+        "properties": {
+          "picks_available": {"type": "boolean"},
+          "live_data_available": {"type": "boolean"},
+          "history_available": {"type": "boolean"},
+          "transfers_available": {"type": "boolean"},
+          "crowd_data_available": {"type": "boolean"},
+          "fixtures_available": {"type": "boolean"},
+          "bootstrap_available": {"type": "boolean"},
+          "completeness_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Data completeness percentage (0-100)"
+          }
+        },
+        "title": "Data Quality Assessment"
+      },
+      "PlayerPick": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer", "description": "Player element ID"},
+          "name": {"type": "string", "description": "Player name"},
+          "multiplier": {"type": "integer", "minimum": 1, "maximum": 3},
+          "is_captain": {"type": "boolean"},
+          "is_vice_captain": {"type": "boolean"},
+          "position": {"type": "integer", "minimum": 1, "maximum": 15},
+          "points": {"type": "integer", "minimum": 0},
+          "is_starting": {"type": "boolean"},
+          "is_bench": {"type": "boolean"},
+          "fixture_difficulty": {"type": "integer", "minimum": 1, "maximum": 5, "nullable": true},
+          "position_type": {"type": "string", "enum": ["Goalkeeper", "Defender", "Midfielder", "Forward", "Unknown"]},
+          "team_id": {"type": "integer", "nullable": true}
+        },
+        "required": ["id", "name", "multiplier", "position", "points"],
+        "title": "Player Pick"
+      },
+      "TransferMove": {
+        "type": "object",
+        "properties": {
+          "element_in": {"type": "string", "description": "Player transferred in"},
+          "element_out": {"type": "string", "description": "Player transferred out"},
+          "cost": {"type": "integer", "minimum": 0, "description": "Transfer cost in points"}
+        },
+        "required": ["element_in", "element_out", "cost"],
+        "title": "Transfer Move"
+      },
+      "CaptainEffectiveness": {
+        "type": "object",
+        "properties": {
+          "captain_points": {"type": "integer", "description": "Total captain points (including multiplier)"},
+          "captain_base_points": {"type": "integer", "description": "Captain base points (before multiplier)"},
+          "max_possible_points": {"type": "integer", "description": "Highest scoring player's points"},
+          "difference": {"type": "integer", "description": "Points difference from optimal choice"},
+          "efficiency_percentage": {"type": "number", "minimum": 0, "maximum": 100},
+          "verdict": {"type": "string", "enum": ["Optimal", "Suboptimal", "Poor", "Excellent"]}
+        },
+        "title": "Captain Effectiveness Analysis"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for authentication (if required)"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Core Data",
+      "description": "Basic FPL data endpoints for bootstrap, fixtures, and live data"
+    },
+    {
+      "name": "Manager Analysis",
+      "description": "Railway-optimized manager analysis endpoints with comprehensive error handling"
+    },
+    {
+      "name": "Player Data",
+      "description": "Individual player statistics, history, and fixtures"
+    },
+    {
+      "name": "League Analysis",
+      "description": "League standings, comparisons, and captain analysis"
+    },
+    {
+      "name": "Planning Tools",
+      "description": "Strategic planning tools with fixture analysis and transfer recommendations"
+    },
+    {
+      "name": "System",
+      "description": "Health checks and system status endpoints"
+    }
+  ]
+},
+  "paths": {
+    "/tools/get_bootstrap_data": {
+      "get": {
+        "summary": "Get Bootstrap Data",
+        "description": "Retrieve FPL bootstrap static data including players, teams, and game settings",
+        "operationId": "get_bootstrap_data_tools_get_bootstrap_data_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Bootstrap Data"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_fixtures": {
+      "get": {
+        "summary": "Get Fixtures",
+        "description": "Retrieve all Premier League fixtures for the current season",
+        "operationId": "get_fixtures_tools_get_fixtures_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_event_live/{gw}": {
+      "get": {
+        "summary": "Get Event Live",
+        "description": "Retrieve live points data for all players in a specific gameweek",
+        "operationId": "get_event_live_tools_get_event_live__gw__get",
+        "parameters": [
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "description": "Gameweek number (1-38)",
+              "title": "Gameweek"
+            },
+            "description": "Gameweek number (1-38)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "players": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_dream_team/{gw}": {
+      "get": {
+        "summary": "Get Dream Team",
+        "description": "Retrieve the official FPL Dream Team for a specific gameweek",
+        "operationId": "get_dream_team_tools_get_dream_team__gw__get",
+        "parameters": [
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "description": "Gameweek number (1-38)",
+              "title": "Gameweek"
+            },
+            "description": "Gameweek number (1-38)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_fixtures_by_gw": {
+      "get": {
+        "summary": "Get Fixtures By Gameweek",
+        "description": "Retrieve fixtures for a specific gameweek with difficulty ratings",
+        "operationId": "get_fixtures_by_gw_tools_get_fixtures_by_gw_get",
+        "parameters": [
+          {
+            "name": "gw",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "description": "Gameweek number (1-38)",
+              "title": "Gameweek"
+            },
+            "description": "Gameweek number (1-38)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "fixtures": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_manager_info/{tid}": {
+      "get": {
+        "summary": "Get Manager Info",
+        "description": "Retrieve detailed information about an FPL manager including overall rank, team value, and transfer data",
+        "operationId": "get_manager_info_tools_get_manager_info__tid__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "FPL team/manager ID",
+              "title": "Team ID"
+            },
+            "description": "FPL team/manager ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Manager not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_manager_history/{tid}": {
+      "get": {
+        "summary": "Get Manager History",
+        "description": "Retrieve complete season history for an FPL manager including gameweek points, overall rank progression, and chip usage",
+        "operationId": "get_manager_history_tools_get_manager_history__tid__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "FPL team/manager ID",
+              "title": "Team ID"
+            },
+            "description": "FPL team/manager ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "array",
+                      "items": {"type": "object"}
+                    },
+                    "past": {
+                      "type": "array", 
+                      "items": {"type": "object"}
+                    },
+                    "chips": {
+                      "type": "array",
+                      "items": {"type": "object"}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Manager not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_manager_picks/{tid}/{gw}": {
+      "get": {
+        "summary": "Get Manager Picks",
+        "description": "Retrieve team selection (picks) for a specific manager and gameweek",
+        "operationId": "get_manager_picks_tools_get_manager_picks__tid___gw__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "FPL team/manager ID",
+              "title": "Team ID"
+            },
+            "description": "FPL team/manager ID"
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "description": "Gameweek number (1-38)",
+              "title": "Gameweek"
+            },
+            "description": "Gameweek number (1-38)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "picks": {
+                      "type": "array",
+                      "items": {"type": "object"}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Manager picks not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_transfers_by_gw/{tid}/{gw}": {
+      "get": {
+        "summary": "Get Transfers By Gameweek",
+        "description": "Retrieve transfer activity for a specific manager and gameweek",
+        "operationId": "get_transfers_by_gw_tools_get_transfers_by_gw__tid___gw__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "Team ID"
+            }
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "title": "Gameweek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transfers": {
+                      "type": "array",
+                      "items": {"type": "object"}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transfer data not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_set_piece_notes": {
+      "get": {
+        "summary": "Get Set Piece Notes",
+        "description": "Retrieve current set piece takers for penalty kicks, free kicks, and corners",
+        "operationId": "get_set_piece_notes_tools_get_set_piece_notes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_top_team_values": {
+      "get": {
+        "summary": "Get Top Team Values",
+        "description": "Retrieve highest valued FPL teams and their total squad values",
+        "operationId": "get_top_team_values_tools_get_top_team_values_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_player_history/{eid}": {
+      "get": {
+        "summary": "Get Player History",
+        "description": "Retrieve complete performance history for a specific player including gameweek points, goals, assists, and other statistics",
+        "operationId": "get_player_history_tools_get_player_history__eid__get",
+        "parameters": [
+          {
+            "name": "eid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "Element ID",
+              "description": "Player element ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Player not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_player_fixtures/{eid}": {
+      "get": {
+        "summary": "Get Player Fixtures",
+        "description": "Retrieve upcoming fixtures for a specific player's team with difficulty ratings",
+        "operationId": "get_player_fixtures_tools_get_player_fixtures__eid__get",
+        "parameters": [
+          {
+            "name": "eid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "Element ID",
+              "description": "Player element ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Player not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_player_profile/{eid}": {
+      "get": {
+        "summary": "Get Player Profile",
+        "description": "Retrieve comprehensive player profile including statistics, form, and fixture analysis",
+        "operationId": "get_player_profile_tools_get_player_profile__eid__get",
+        "parameters": [
+          {
+            "name": "eid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "Element ID",
+              "description": "Player element ID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Player not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_crowd_trends_by_gw/{gw}": {
+      "get": {
+        "summary": "Get Crowd Trends By Gameweek",
+        "description": "Retrieve ownership trends and popular picks for a specific gameweek",
+        "operationId": "get_crowd_trends_by_gw_tools_get_crowd_trends_by_gw__gw__get",
+        "parameters": [
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "title": "Gameweek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_classic_league_standings/{lid}": {
+      "get": {
+        "summary": "Get Classic League Standings",
+        "description": "Retrieve standings for a classic league with pagination support",
+        "operationId": "get_classic_league_standings_tools_get_classic_league_standings__lid__get",
+        "parameters": [
+          {
+            "name": "lid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "League ID"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "League not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_league_captains/{lid}/{gw}": {
+      "get": {
+        "summary": "Get League Captains",
+        "description": "Retrieve captain choices for all managers in a league for a specific gameweek",
+        "operationId": "get_league_captains_tools_get_league_captains__lid___gw__get",
+        "parameters": [
+          {
+            "name": "lid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "League ID"
+            }
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "title": "Gameweek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "League or gameweek data not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_manager_gameweek_summary/{tid}/{gw}": {
+      "get": {
+        "summary": "Get Manager Gameweek Summary",
+        "description": "Railway-optimized gameweek summary with parallel processing, fixture difficulty analysis, and comprehensive error handling. Provides enriched player data, captain effectiveness, and transfer analysis with graceful degradation for missing data sources.",
+        "operationId": "get_manager_gameweek_summary_tools_get_manager_gameweek_summary__tid___gw__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "Team ID",
+              "description": "FPL team/manager ID"
+            },
+            "description": "FPL team/manager ID"
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "title": "Gameweek",
+              "description": "Gameweek number (1-38)"
+            },
+            "description": "Gameweek number (1-38)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "manager_id": {"type": "integer"},
+                    "gameweek": {"type": "integer"},
+                    "chips_used": {"type": "array", "items": {"type": "string"}},
+                    "picks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "integer"},
+                          "name": {"type": "string"},
+                          "multiplier": {"type": "integer"},
+                          "is_captain": {"type": "boolean"},
+                          "is_vice_captain": {"type": "boolean"},
+                          "position": {"type": "integer"},
+                          "points": {"type": "integer"},
+                          "is_starting": {"type": "boolean"},
+                          "is_bench": {"type": "boolean"},
+                          "fixture_difficulty": {"type": "integer", "nullable": true},
+                          "position_type": {"type": "string"},
+                          "team_id": {"type": "integer", "nullable": true}
+                        }
+                      }
+                    },
+                    "transfers": {"type": "array"},
+                    "total_transfer_cost": {"type": "integer"},
+                    "captain_effectiveness": {"type": "object"},
+                    "crowd_trends": {"type": "object"},
+                    "total_points": {"type": "integer"},
+                    "bench_points": {"type": "integer"},
+                    "processing_time_ms": {"type": "number"},
+                    "data_quality": {
+                      "type": "object",
+                      "properties": {
+                        "picks_available": {"type": "boolean"},
+                        "live_data_available": {"type": "boolean"},
+                        "history_available": {"type": "boolean"},
+                        "transfers_available": {"type": "boolean"},
+                        "crowd_data_available": {"type": "boolean"},
+                        "fixtures_available": {"type": "boolean"},
+                        "bootstrap_available": {"type": "boolean"},
+                        "completeness_score": {"type": "number"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Manager or gameweek data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_manager_gameweek_analysis/{tid}/{gw}": {
+      "get": {
+        "summary": "Get Manager Gameweek Analysis",
+        "description": "Railway-optimized comprehensive gameweek analysis with enhanced domain modeling. Provides formation analysis, value efficiency, captain recommendations, and transfer insights with robust error handling and fallback data for incomplete API responses.",
+        "operationId": "get_manager_gameweek_analysis_tools_get_manager_gameweek_analysis__tid___gw__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "Team ID",
+              "description": "FPL team/manager ID"
+            },
+            "description": "FPL team/manager ID"
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 38,
+              "title": "Gameweek",
+              "description": "Gameweek number (1-38)"
+            },
+            "description": "Gameweek number (1-38)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "analysis_type": {"type": "string"},
+                        "manager_id": {"type": "integer"},
+                        "gameweek": {"type": "integer"},
+                        "generated_at": {"type": "string", "format": "date-time"},
+                        "processing_time_ms": {"type": "number"},
+                        "environment": {"type": "string"},
+                        "data_quality": {"type": "object"}
+                      }
+                    },
+                    "total_points": {"type": "integer"},
+                    "formation_analysis": {"type": "object"},
+                    "value_efficiency": {"type": "object"},
+                    "captain_advice": {"type": "object"},
+                    "transfer_justification": {"type": "object"},
+                    "template_analysis": {"type": "object"},
+                    "expected_points_delta": {"type": "object"},
+                    "bench_summary": {"type": "object"},
+                    "position_summary": {"type": "object"},
+                    "llm_prompt_suggestion": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Manager or gameweek data not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
