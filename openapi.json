@@ -10,9 +10,991 @@
     }
   ],
   "paths": {
-    ...
+    "/tools/get_bootstrap_data": {
+      "get": {
+        "summary": "Get Bootstrap Data",
+        "operationId": "get_bootstrap_data_tools_get_bootstrap_data_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Bootstrap Data Tools Get Bootstrap Data Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_fixtures": {
+      "get": {
+        "summary": "Get Fixtures",
+        "operationId": "get_fixtures_tools_get_fixtures_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_event_live/{gw}": {
+      "get": {
+        "summary": "Get Event Live",
+        "operationId": "get_event_live_tools_get_event_live__gw__get",
+        "parameters": [
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Gameweek number",
+              "title": "Gw"
+            },
+            "description": "Gameweek number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_dream_team/{gw}": {
+      "get": {
+        "summary": "Get Dream Team",
+        "operationId": "get_dream_team_tools_get_dream_team__gw__get",
+        "parameters": [
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Gameweek number",
+              "title": "Gw"
+            },
+            "description": "Gameweek number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_fixtures_by_gw": {
+      "get": {
+        "summary": "Get Fixtures By Gw",
+        "operationId": "get_fixtures_by_gw_tools_get_fixtures_by_gw_get",
+        "parameters": [
+          {
+            "name": "gw",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Gameweek number",
+              "title": "Gw"
+            },
+            "description": "Gameweek number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_manager_info/{tid}": {
+      "get": {
+        "summary": "Get Manager Info",
+        "operationId": "get_manager_info_tools_get_manager_info__tid__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "FPL team ID",
+              "title": "Tid"
+            },
+            "description": "FPL team ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_manager_history/{tid}": {
+      "get": {
+        "summary": "Get Manager History",
+        "operationId": "get_manager_history_tools_get_manager_history__tid__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "FPL team ID",
+              "title": "Tid"
+            },
+            "description": "FPL team ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_manager_picks/{tid}/{gw}": {
+      "get": {
+        "summary": "Get Manager Picks",
+        "operationId": "get_manager_picks_tools_get_manager_picks__tid___gw__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Manager (team) ID",
+              "title": "Tid"
+            },
+            "description": "Manager (team) ID"
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Gameweek number",
+              "title": "Gw"
+            },
+            "description": "Gameweek number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_transfers_by_gw/{tid}/{gw}": {
+      "get": {
+        "summary": "Get Transfers By Gw",
+        "operationId": "get_transfers_by_gw_tools_get_transfers_by_gw__tid___gw__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tid"
+            }
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Gw"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_set_piece_notes": {
+      "get": {
+        "summary": "Get Set Piece Notes",
+        "operationId": "get_set_piece_notes_tools_get_set_piece_notes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_top_team_values": {
+      "get": {
+        "summary": "Get Top Team Values",
+        "operationId": "get_top_team_values_tools_get_top_team_values_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_player_history/{eid}": {
+      "get": {
+        "summary": "Get Player History",
+        "operationId": "get_player_history_tools_get_player_history__eid__get",
+        "parameters": [
+          {
+            "name": "eid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Eid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_player_fixtures/{eid}": {
+      "get": {
+        "summary": "Get Player Fixtures",
+        "operationId": "get_player_fixtures_tools_get_player_fixtures__eid__get",
+        "parameters": [
+          {
+            "name": "eid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Eid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_player_profile/{eid}": {
+      "get": {
+        "summary": "Get Player Profile",
+        "operationId": "get_player_profile_tools_get_player_profile__eid__get",
+        "parameters": [
+          {
+            "name": "eid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Eid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_crowd_trends_by_gw/{gw}": {
+      "get": {
+        "summary": "Get Crowd Trends By Gw",
+        "operationId": "get_crowd_trends_by_gw_tools_get_crowd_trends_by_gw__gw__get",
+        "parameters": [
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Gw"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_classic_league_standings/{lid}": {
+      "get": {
+        "summary": "Get Classic League Standings",
+        "operationId": "get_classic_league_standings_tools_get_classic_league_standings__lid__get",
+        "parameters": [
+          {
+            "name": "lid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Lid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_league_captains/{lid}/{gw}": {
+      "get": {
+        "summary": "Get League Captains",
+        "operationId": "get_league_captains_tools_get_league_captains__lid___gw__get",
+        "parameters": [
+          {
+            "name": "lid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Lid"
+            }
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Gw"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Health check endpoint for Railway monitoring",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_manager_gameweek_summary/{tid}/{gw}": {
+      "get": {
+        "summary": "Get Manager Gameweek Summary",
+        "description": "Enhanced gameweek summary with Railway optimizations and comprehensive error handling",
+        "operationId": "get_manager_gameweek_summary_tools_get_manager_gameweek_summary__tid___gw__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tid"
+            }
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Gw"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Manager Gameweek Summary Tools Get Manager Gameweek Summary  Tid   Gw  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_manager_gameweek_analysis/{tid}/{gw}": {
+      "get": {
+        "summary": "Get Manager Gameweek Analysis",
+        "description": "Enhanced gameweek analysis with Railway optimizations",
+        "operationId": "get_manager_gameweek_analysis_tools_get_manager_gameweek_analysis__tid___gw__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tid"
+            }
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Gw"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_upcoming_gameweek_planner/{tid}/{next_gw}": {
+      "get": {
+        "summary": "Get Upcoming Gameweek Planner",
+        "description": "Enhanced gameweek planner with Railway optimizations and configurable lookahead",
+        "operationId": "get_upcoming_gameweek_planner_tools_get_upcoming_gameweek_planner__tid___next_gw__get",
+        "parameters": [
+          {
+            "name": "tid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tid"
+            }
+          },
+          {
+            "name": "next_gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Next Gw"
+            }
+          },
+          {
+            "name": "gameweeks_ahead",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 5,
+              "minimum": 1,
+              "description": "Number of gameweeks to analyze ahead (1-5)",
+              "default": 3,
+              "title": "Gameweeks Ahead"
+            },
+            "description": "Number of gameweeks to analyze ahead (1-5)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Upcoming Gameweek Planner Tools Get Upcoming Gameweek Planner  Tid   Next Gw  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_rival_comparison/{lid}/{gw}": {
+      "get": {
+        "summary": "Get Rival Comparison",
+        "operationId": "get_rival_comparison_tools_get_rival_comparison__lid___gw__get",
+        "parameters": [
+          {
+            "name": "lid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Lid"
+            }
+          },
+          {
+            "name": "gw",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Gw"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/get_team_images": {
+      "get": {
+        "summary": "Get Team Images",
+        "description": "Returns shirt and badge image URLs for each PL team in 2025/26.",
+        "operationId": "get_team_images_tools_get_team_images_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Get Team Images Tools Get Team Images Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   "components": {
-    ...
+    "schemas": {
+      "ApiResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "processing_time_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Processing Time Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "ApiResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
   }
 }
